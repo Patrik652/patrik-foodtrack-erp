@@ -13,6 +13,16 @@ FoodTrack ERP je portfolio demo pre C#/.NET pozíciu v Starbug s.r.o. Repo teraz
 - Dockerfile pre API a root `docker-compose.yml`
 - xUnit + FluentAssertions coverage cez domain, application a API integration
 
+## Tech Highlights
+
+- Clean Architecture
+- FIFO stock rotation
+- Batch expiration alerts
+- Operator auth with JWT
+- MAUI mobile shell
+- Docker support
+- 36+ automated tests
+
 ## Architecture
 
 ```mermaid
@@ -61,6 +71,7 @@ Anonymous read endpoints:
 
 - `POST /api/auth/login`
 - `GET /api/dashboard/expiration-overview`
+- `GET /api/dashboard/stock-alerts`
 - `GET /api/products`
 - `GET /api/products/{productId}`
 - `GET /api/products/{productId}/fifo-batches`
@@ -76,10 +87,88 @@ Authenticated warehouse/admin endpoints:
 - `POST /api/inventory/receive`
 - `POST /api/inventory/dispatch`
 - `POST /api/inventory/adjustments`
+- `POST /api/batches/{batchId}/recall`
 - `PUT /api/batches/{batchId}`
 - `DELETE /api/batches/{batchId}`
 
 Swagger používa bearer security scheme. Najprv zavolaj `POST /api/auth/login`, potom vlož vrátený token do `Authorize`.
+
+## Quick Demo
+
+Spusti API:
+
+```bash
+export PATH="$HOME/.dotnet:$PATH"
+dotnet run --project src/FoodTrack.API --urls http://localhost:5099
+```
+
+Základné read endpointy:
+
+```bash
+curl http://localhost:5099/api/products
+curl http://localhost:5099/api/dashboard/expiration-overview
+curl http://localhost:5099/api/dashboard/stock-alerts
+```
+
+Login a token:
+
+Quick demo používa `jq` na vytiahnutie identifikátorov z JSON odpovedí.
+
+```bash
+export TOKEN=$(curl -sS -X POST http://localhost:5099/api/auth/login \
+  -H 'Content-Type: application/json' \
+  --data '{"badgeCode":"OP-1001","pin":"1234"}' | jq -r '.accessToken')
+```
+
+Receive batch:
+
+```bash
+PRODUCT_ID=$(curl -sS http://localhost:5099/api/products | jq -r '.[0].id')
+RECEIVE_RESPONSE=$(curl -sS -X POST http://localhost:5099/api/inventory/receive \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  --data "{
+    \"productId\":\"$PRODUCT_ID\",
+    \"batchNumber\":\"LOT-DEMO-001\",
+    \"manufactureDate\":\"2026-04-13T00:00:00Z\",
+    \"expirationDate\":\"2026-05-15T00:00:00Z\",
+    \"quantity\":10,
+    \"location\":\"A-01-09\",
+    \"note\":\"README quick demo receive\",
+    \"receivedAtUtc\":\"2026-04-13T06:45:00Z\"
+  }")
+BATCH_ID=$(printf '%s' "$RECEIVE_RESPONSE" | jq -r '.batchId')
+printf '%s\n' "$RECEIVE_RESPONSE"
+```
+
+Dispatch stock:
+
+```bash
+curl -X POST http://localhost:5099/api/inventory/dispatch \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  --data "{
+    \"productId\":\"$PRODUCT_ID\",
+    \"quantity\":1,
+    \"dispatchedAtUtc\":\"2026-04-13T06:46:00Z\",
+    \"note\":\"README quick demo dispatch\"
+  }"
+```
+
+Recall batch:
+
+```bash
+curl -X POST http://localhost:5099/api/batches/$BATCH_ID/recall \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Dashboard a audit filter:
+
+```bash
+curl http://localhost:5099/api/dashboard/expiration-overview
+curl http://localhost:5099/api/dashboard/stock-alerts
+curl "http://localhost:5099/api/stock-movements?batchId=$BATCH_ID"
+```
 
 ## Local Setup
 
@@ -129,9 +218,10 @@ SQLite databáza sa ukladá do named volume `foodtrack-data`.
 Automatizované testy v solution:
 
 - `FoodTrack.Domain.Tests`: `6`
-- `FoodTrack.Application.Tests`: `9`
-- `FoodTrack.API.Tests`: `11`
-- spolu: `26` zelených testov
+- `FoodTrack.Application.Tests`: `10`
+- `FoodTrack.API.Tests`: `14`
+- `FoodTrack.Presentation.Tests`: `6`
+- spolu: `36` zelených testov
 
 ## Verification
 
