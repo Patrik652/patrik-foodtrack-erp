@@ -202,9 +202,7 @@ Collection si sama uloží `jwtToken`, prvý `productId` a následne aj `batchId
 
 Swagger UI walkthrough — login, produkty, dashboard, stock alerty, inventory endpointy:
 
-https://github.com/user-attachments/assets/foodtrack-demo.mp4
-
-<video src="docs/assets/foodtrack-demo.mp4" width="720" controls poster="docs/assets/foodtrack-demo-poster.png"></video>
+https://github.com/Patrik652/patrik-foodtrack-erp/releases/download/v1.0.0/foodtrack-demo.mp4
 
 Skript na regenerovanie videa: `node scripts/record-demo-video.mjs`
 
