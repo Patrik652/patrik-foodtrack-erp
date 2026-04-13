@@ -200,15 +200,13 @@ Collection si sama uloží `jwtToken`, prvý `productId` a následne aj `batchId
 
 ## Demo Video
 
-GitHub-ready prezentačné médium je priamo vo verziovanom stave:
+Swagger UI walkthrough — login, produkty, dashboard, stock alerty, inventory endpointy:
 
-- video asset: `docs/assets/foodtrack-demo.mp4`
-- poster image: `docs/assets/foodtrack-demo-poster.png`
-- spoken walkthrough script: `docs/presentation/github-demo-script.md`
+https://github.com/user-attachments/assets/foodtrack-demo.mp4
 
-![FoodTrack Demo Poster](docs/assets/foodtrack-demo-poster.png)
+<video src="docs/assets/foodtrack-demo.mp4" width="720" controls poster="docs/assets/foodtrack-demo-poster.png"></video>
 
-Najpraktickejší finálny krok na GitHube je nahrať `foodtrack-demo.mp4` do Release assets alebo ho odlinkovať z About sekcie repozitára.
+Skript na regenerovanie videa: `node scripts/record-demo-video.mjs`
 
 ## Local Setup
 
