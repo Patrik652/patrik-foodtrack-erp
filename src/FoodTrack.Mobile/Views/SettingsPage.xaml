@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.SettingsPage"
+             Title="Settings">
+    <ScrollView BackgroundColor="#F6EFE5">
+        <VerticalStackLayout Padding="20"
+                             Spacing="16">
+            <Label Text="Nastavenia a session"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="#1E2E1F" />
+            <Border Padding="18"
+                    BackgroundColor="#FFF9F2"
+                    Stroke="#E4C8A8"
+                    StrokeShape="RoundRectangle 22">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="{Binding OperatorName, StringFormat='Operátor {0}'}"
+                           TextColor="#1E2E1F" />
+                    <Label Text="{Binding BadgeCode, StringFormat='Badge {0}'}"
+                           TextColor="#6B6258" />
+                    <Label Text="{Binding ApiBaseAddress, StringFormat='API {0}'}"
+                           TextColor="#6B6258" />
+                    <Button Text="Odhlásiť"
+                            Clicked="OnLogoutClicked" />
+                </VerticalStackLayout>
+            </Border>
+            <Label Text="{Binding StatusMessage}"
+                   TextColor="#3C6E47" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

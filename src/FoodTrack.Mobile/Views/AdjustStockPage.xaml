@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.AdjustStockPage"
+             Title="Inventura">
+    <ScrollView BackgroundColor="#F6EFE5">
+        <VerticalStackLayout Padding="20"
+                             Spacing="16">
+            <Label Text="Inventúrna úprava"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="#1E2E1F" />
+            <Border Padding="18"
+                    BackgroundColor="#FFF9F2"
+                    Stroke="#E4C8A8"
+                    StrokeShape="RoundRectangle 22">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="{Binding ProductName}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#3C6E47" />
+                    <Label Text="{Binding BatchNumber}"
+                           TextColor="#6B6258" />
+                    <Entry Placeholder="Batch ID"
+                           Text="{Binding BatchIdText}" />
+                    <Label Text="{Binding CurrentQuantity, StringFormat='Aktuálne množstvo {0}'}"
+                           TextColor="#6B6258" />
+                    <Entry Placeholder="Nová množstevná hladina"
+                           Text="{Binding NewQuantityText}"
+                           Keyboard="Numeric" />
+                    <Editor Placeholder="Dôvod úpravy"
+                            AutoSize="TextChanges"
+                            Text="{Binding Note}" />
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button Text="Načítať batch"
+                                Clicked="OnLoadBatchClicked" />
+                        <Button Grid.Column="1"
+                                Text="Uložiť úpravu"
+                                Clicked="OnSubmitClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="#A62C21" />
+            <Label Text="{Binding StatusMessage}"
+                   TextColor="#3C6E47" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

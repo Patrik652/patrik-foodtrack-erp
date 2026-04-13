@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.LoginPage"
+             Title="Prihlasenie">
+    <ScrollView BackgroundColor="#F6EFE5">
+        <Grid Padding="24,48" RowDefinitions="*,Auto">
+            <Border BackgroundColor="#FFF9F2"
+                    Stroke="#E4C8A8"
+                    StrokeShape="RoundRectangle 24"
+                    Padding="24"
+                    VerticalOptions="Center">
+                <VerticalStackLayout Spacing="18">
+                    <Label Text="FoodTrack Mobile"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="#1E2E1F" />
+                    <Label Text="Prihlasenie skladového operátora cez badge kód a PIN."
+                           TextColor="#5C534C" />
+                    <Border Stroke="#E4C8A8"
+                            StrokeShape="RoundRectangle 16"
+                            BackgroundColor="#FFFDFC"
+                            Padding="12,6">
+                        <Entry Placeholder="Badge code"
+                               Text="{Binding BadgeCode}"
+                               ClearButtonVisibility="WhileEditing" />
+                    </Border>
+                    <Border Stroke="#E4C8A8"
+                            StrokeShape="RoundRectangle 16"
+                            BackgroundColor="#FFFDFC"
+                            Padding="12,6">
+                        <Entry Placeholder="PIN"
+                               IsPassword="True"
+                               Keyboard="Numeric"
+                               Text="{Binding Pin}" />
+                    </Border>
+                    <Button Text="Prihlasit operatora"
+                            Clicked="OnLoginClicked" />
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}" />
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="#A62C21" />
+                    <Label Text="{Binding StatusMessage}"
+                           TextColor="#3C6E47" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Grid.Row="1"
+                   Margin="0,24,0,0"
+                   Text="Demo flow: OP-1001 / 1234"
+                   HorizontalOptions="Center"
+                   TextColor="#6B6258" />
+        </Grid>
+    </ScrollView>
+</ContentPage>

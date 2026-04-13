@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.BatchDetailPage"
+             Title="Detail sarze">
+    <ScrollView BackgroundColor="#F6EFE5">
+        <VerticalStackLayout Padding="20"
+                             Spacing="16">
+            <Border Padding="18"
+                    BackgroundColor="#FFF9F2"
+                    Stroke="#E4C8A8"
+                    StrokeShape="RoundRectangle 22">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="{Binding Batch.ProductName}"
+                           FontSize="26"
+                           FontAttributes="Bold"
+                           TextColor="#1E2E1F" />
+                    <Grid ColumnDefinitions="Auto,*"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                          RowSpacing="6"
+                          ColumnSpacing="10">
+                        <Label Text="Šarža"
+                               TextColor="#6B6258" />
+                        <Label Grid.Column="1"
+                               Text="{Binding Batch.BatchNumber}"
+                               TextColor="#1E2E1F" />
+                        <Label Grid.Row="1"
+                               Text="Lokácia"
+                               TextColor="#6B6258" />
+                        <Label Grid.Row="1"
+                               Grid.Column="1"
+                               Text="{Binding Batch.Location}"
+                               TextColor="#1E2E1F" />
+                        <Label Grid.Row="2"
+                               Text="Množstvo"
+                               TextColor="#6B6258" />
+                        <Label Grid.Row="2"
+                               Grid.Column="1"
+                               Text="{Binding Batch.Quantity, StringFormat='{0:N2}'}"
+                               TextColor="#1E2E1F" />
+                        <Label Grid.Row="3"
+                               Text="Expirácia"
+                               TextColor="#6B6258" />
+                        <Label Grid.Row="3"
+                               Grid.Column="1"
+                               Text="{Binding Batch.ExpirationDate, StringFormat='{0:dd.MM.yyyy}'}"
+                               TextColor="#1E2E1F" />
+                        <Label Grid.Row="4"
+                               Text="Status"
+                               TextColor="#6B6258" />
+                        <Label Grid.Row="4"
+                               Grid.Column="1"
+                               Text="{Binding Batch.Status}"
+                               TextColor="#1E2E1F" />
+                        <Label Grid.Row="5"
+                               Text="Alert"
+                               TextColor="#6B6258" />
+                        <Label Grid.Row="5"
+                               Grid.Column="1"
+                               Text="{Binding Batch.ExpirationAlert}"
+                               TextColor="#A62C21" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button Text="Inventúra"
+                                Clicked="OnAdjustClicked" />
+                        <Button Grid.Column="1"
+                                Text="FIFO dispatch"
+                                Clicked="OnDispatchClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding StatusMessage}"
+                   TextColor="#3C6E47" />
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="#A62C21" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+            <Label Text="História pohybov"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="#1E2E1F" />
+            <CollectionView ItemsSource="{Binding Batch.Movements}"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label Text="Pre túto šaržu zatiaľ nie je história pohybov."
+                           TextColor="#6B6258" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,10"
+                                Padding="14"
+                                BackgroundColor="#FFFDFC"
+                                Stroke="#E4D8C7"
+                                StrokeShape="RoundRectangle 16">
+                            <Grid ColumnDefinitions="*,Auto"
+                                  RowDefinitions="Auto,Auto"
+                                  RowSpacing="6">
+                                <Label Text="{Binding Type}"
+                                       FontAttributes="Bold"
+                                       TextColor="#1E2E1F" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Quantity, StringFormat='{0:N2}'}"
+                                       TextColor="#1E2E1F" />
+                                <Label Grid.Row="1"
+                                       Text="{Binding Note}"
+                                       TextColor="#6B6258" />
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
+                                       Text="{Binding Timestamp, StringFormat='{0:dd.MM HH:mm}'}"
+                                       HorizontalTextAlignment="End"
+                                       TextColor="#6B6258" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

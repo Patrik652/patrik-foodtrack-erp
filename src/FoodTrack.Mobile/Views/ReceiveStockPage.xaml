@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.ReceiveStockPage"
+             Title="Prijem">
+    <ScrollView BackgroundColor="#F6EFE5">
+        <VerticalStackLayout Padding="20"
+                             Spacing="16">
+            <Label Text="Príjem novej šarže"
+                   FontAttributes="Bold"
+                   FontSize="24"
+                   TextColor="#1E2E1F" />
+            <Border Padding="18"
+                    BackgroundColor="#FFF9F2"
+                    Stroke="#E4C8A8"
+                    StrokeShape="RoundRectangle 22">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="{Binding ProductName}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#3C6E47" />
+                    <Entry Placeholder="Product ID"
+                           Text="{Binding ProductIdText}" />
+                    <Entry Placeholder="Batch / barcode"
+                           Text="{Binding BatchNumber}" />
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <DatePicker Date="{Binding ManufactureDate}" />
+                        <DatePicker Grid.Column="1"
+                                    Date="{Binding ExpirationDate}" />
+                    </Grid>
+                    <Entry Placeholder="Lokácia"
+                           Text="{Binding Location}" />
+                    <Entry Placeholder="Množstvo"
+                           Text="{Binding QuantityText}"
+                           Keyboard="Numeric" />
+                    <Editor Placeholder="Poznámka k príjmu"
+                            AutoSize="TextChanges"
+                            Text="{Binding Note}" />
+                    <Button Text="Uložiť príjem"
+                            Clicked="OnSubmitClicked" />
+                </VerticalStackLayout>
+            </Border>
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="#A62C21" />
+            <Label Text="{Binding StatusMessage}"
+                   TextColor="#3C6E47" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

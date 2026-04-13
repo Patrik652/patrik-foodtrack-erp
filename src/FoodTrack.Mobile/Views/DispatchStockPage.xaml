@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.DispatchStockPage"
+             Title="Expedicia">
+    <ScrollView BackgroundColor="#F6EFE5">
+        <Grid Padding="20"
+              RowDefinitions="Auto,Auto,Auto,*,Auto"
+              RowSpacing="14">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="FIFO vyskladnenie"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="#1E2E1F" />
+                <Label Text="{Binding ProductName}"
+                       TextColor="#3C6E47" />
+            </VerticalStackLayout>
+
+            <Border Grid.Row="1"
+                    Padding="18"
+                    BackgroundColor="#FFF9F2"
+                    Stroke="#E4C8A8"
+                    StrokeShape="RoundRectangle 22">
+                <VerticalStackLayout Spacing="12">
+                    <Entry Placeholder="Product ID"
+                           Text="{Binding ProductIdText}" />
+                    <Entry Placeholder="Požadované množstvo"
+                           Text="{Binding QuantityText}"
+                           Keyboard="Numeric" />
+                    <Editor Placeholder="Poznámka pre expedíciu"
+                            AutoSize="TextChanges"
+                            Text="{Binding Note}" />
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button Text="Načítať FIFO"
+                                Clicked="OnRefreshFifoClicked" />
+                        <Button Grid.Column="1"
+                                Text="Odoslať vyskladnenie"
+                                Clicked="OnSubmitClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Grid.Row="2"
+                   Text="{Binding StatusMessage}"
+                   TextColor="#3C6E47" />
+            <CollectionView Grid.Row="3"
+                            ItemsSource="{Binding AvailableBatches}"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="12">
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                           IsVisible="{Binding IsBusy}" />
+                        <Label Text="Žiadne FIFO šarže pre zvolený produkt."
+                               TextColor="#6B6258" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,10"
+                                Padding="14"
+                                BackgroundColor="#FFFDFC"
+                                Stroke="#E4D8C7"
+                                StrokeShape="RoundRectangle 18">
+                            <Grid ColumnDefinitions="*,Auto"
+                                  RowDefinitions="Auto,Auto"
+                                  RowSpacing="6">
+                                <Label Text="{Binding BatchNumber}"
+                                       FontAttributes="Bold"
+                                       TextColor="#1E2E1F" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Quantity, StringFormat='{0:N2}'}"
+                                       TextColor="#1E2E1F" />
+                                <Label Grid.Row="1"
+                                       Text="{Binding Location}"
+                                       TextColor="#6B6258" />
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
+                                       Text="{Binding ExpirationDate, StringFormat='{0:dd.MM.yyyy}'}"
+                                       TextColor="#6B6258" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <VerticalStackLayout Grid.Row="4"
+                                 Spacing="8">
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}" />
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="#A62C21" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

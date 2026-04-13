@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:FoodTrack.Mobile.Views"
+       x:Class="FoodTrack.Mobile.AppShell"
+       Shell.FlyoutBehavior="Disabled"
+       Title="FoodTrack Mobile">
+    <TabBar>
+        <ShellContent Title="Scan"
+                      Route="scan"
+                      ContentTemplate="{DataTemplate views:ScanPage}" />
+        <ShellContent Title="Inventory"
+                      Route="inventory"
+                      ContentTemplate="{DataTemplate views:ProductListPage}" />
+        <ShellContent Title="Dashboard"
+                      Route="dashboard"
+                      ContentTemplate="{DataTemplate views:DashboardPage}" />
+        <ShellContent Title="Settings"
+                      Route="settings"
+                      ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </TabBar>
+</Shell>

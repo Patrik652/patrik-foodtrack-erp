@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.ProductListPage"
+             Title="Inventory">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh"
+                     Clicked="OnRefreshRequested" />
+    </ContentPage.ToolbarItems>
+    <RefreshView IsRefreshing="{Binding IsBusy}"
+                 Refreshing="OnRefreshRequested">
+        <Grid Padding="16"
+              RowDefinitions="Auto,Auto,Auto,Auto,*"
+              RowSpacing="12"
+              BackgroundColor="#F6EFE5">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Skladové produkty"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="#1E2E1F" />
+                <Label Text="{Binding StatusMessage}"
+                       TextColor="#6B6258" />
+            </VerticalStackLayout>
+            <SearchBar Grid.Row="1"
+                       Placeholder="Hľadať podľa názvu, SKU alebo kategórie"
+                       Text="{Binding SearchText}" />
+            <Label Grid.Row="2"
+                   Text="Akcia Sarza otvorí najbližšiu FIFO šaržu produktu."
+                   TextColor="#6B6258" />
+            <Label Grid.Row="3"
+                   Text="{Binding ErrorMessage}"
+                   TextColor="#A62C21" />
+            <CollectionView Grid.Row="4"
+                            ItemsSource="{Binding Products}"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="12"
+                                         Spacing="12">
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                           IsVisible="{Binding IsBusy}" />
+                        <Label Text="Zatiaľ žiadne produkty pre zvolený filter."
+                               TextColor="#6B6258" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,12"
+                                Padding="16"
+                                BackgroundColor="#FFF9F2"
+                                Stroke="#E4C8A8"
+                                StrokeShape="RoundRectangle 20">
+                            <VerticalStackLayout Spacing="12">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding Name}"
+                                           FontSize="20"
+                                           FontAttributes="Bold"
+                                           TextColor="#1E2E1F" />
+                                    <Label Text="{Binding Sku, StringFormat='SKU {0}'}"
+                                           TextColor="#6B6258" />
+                                    <Label Text="{Binding Category, StringFormat='Kategória {0}'}"
+                                           TextColor="#6B6258" />
+                                    <Label Text="{Binding Unit, StringFormat='Jednotka {0}'}"
+                                           TextColor="#6B6258" />
+                                    <Label Text="{Binding MinStockLevel, StringFormat='Min. zásoba {0}'}"
+                                           TextColor="#6B6258" />
+                                </VerticalStackLayout>
+                                <Grid ColumnDefinitions="*,*,*"
+                                      ColumnSpacing="8">
+                                    <Button Text="Sarza"
+                                            Clicked="OnViewBatchClicked" />
+                                    <Button Grid.Column="1"
+                                            Text="Príjem"
+                                            Clicked="OnReceiveClicked" />
+                                    <Button Grid.Column="2"
+                                            Text="Dispatch"
+                                            Clicked="OnDispatchClicked" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </RefreshView>
+</ContentPage>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodTrack.Mobile.Views.DashboardPage"
+             Title="Dashboard">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh"
+                     Clicked="OnRefreshClicked" />
+    </ContentPage.ToolbarItems>
+    <ScrollView BackgroundColor="#F6EFE5">
+        <Grid Padding="20"
+              RowDefinitions="Auto,Auto,Auto,Auto,*"
+              RowSpacing="14">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Expiračný dashboard"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="#1E2E1F" />
+                <Label Text="{Binding StatusMessage}"
+                       TextColor="#6B6258" />
+            </VerticalStackLayout>
+
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,*,*,*"
+                  ColumnSpacing="10">
+                <Border Padding="12"
+                        BackgroundColor="#FFF1EB"
+                        Stroke="#F0C2B6"
+                        StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout>
+                        <Label Text="Exp."
+                               TextColor="#A62C21" />
+                        <Label Text="{Binding Overview.ExpiredCount}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="#A62C21" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1"
+                        Padding="12"
+                        BackgroundColor="#FFF1EB"
+                        Stroke="#F0C2B6"
+                        StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout>
+                        <Label Text="7 dní"
+                               TextColor="#A62C21" />
+                        <Label Text="{Binding Overview.Critical7DaysCount}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="#A62C21" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2"
+                        Padding="12"
+                        BackgroundColor="#FFF8E7"
+                        Stroke="#F0D39A"
+                        StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout>
+                        <Label Text="14 dní"
+                               TextColor="#9B6C10" />
+                        <Label Text="{Binding Overview.Warning14DaysCount}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="#9B6C10" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="3"
+                        Padding="12"
+                        BackgroundColor="#F3FAF1"
+                        Stroke="#B7D4B5"
+                        StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout>
+                        <Label Text="30 dní"
+                               TextColor="#3C6E47" />
+                        <Label Text="{Binding Overview.Notice30DaysCount}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="#3C6E47" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Label Grid.Row="2"
+                   Text="{Binding ErrorMessage}"
+                   TextColor="#A62C21" />
+            <ActivityIndicator Grid.Row="3"
+                               IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+            <CollectionView Grid.Row="4"
+                            ItemsSource="{Binding Overview.Items}"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label Text="Žiadne prioritné expiračné alerty."
+                           TextColor="#6B6258" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,12"
+                                Padding="16"
+                                BackgroundColor="#FFF9F2"
+                                Stroke="#E4C8A8"
+                                StrokeShape="RoundRectangle 20">
+                            <Grid RowDefinitions="Auto,Auto"
+                                  ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="12"
+                                  RowSpacing="8">
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding ProductName}"
+                                           FontAttributes="Bold"
+                                           FontSize="18"
+                                           TextColor="#1E2E1F" />
+                                    <Label Text="{Binding BatchNumber, StringFormat='Šarža {0}'}"
+                                           TextColor="#6B6258" />
+                                    <Label Text="{Binding Location, StringFormat='Lokácia {0}'}"
+                                           TextColor="#6B6258" />
+                                </VerticalStackLayout>
+                                <Button Grid.Column="1"
+                                        Text="Detail"
+                                        Clicked="OnOpenAlertBatchClicked" />
+                                <Label Grid.Row="1"
+                                       Text="{Binding Alert, StringFormat='Alert {0}'}"
+                                       TextColor="#A62C21" />
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
+                                       Text="{Binding DaysUntilExpiration, StringFormat='{0} dní'}"
+                                       HorizontalTextAlignment="End"
+                                       TextColor="#6B6258" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,16 @@
+services:
+  foodtrack-api:
+    build:
+      context: .
+      dockerfile: src/FoodTrack.API/Dockerfile
+    container_name: foodtrack-api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__FoodTrack: Data Source=/data/foodtrack.db
+    volumes:
+      - foodtrack-data:/data
+
+volumes:
+  foodtrack-data:
