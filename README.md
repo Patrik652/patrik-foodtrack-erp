@@ -1,5 +1,7 @@
 # FoodTrack ERP
 
+[![CI](https://github.com/Patrik652/patrik-foodtrack-erp/actions/workflows/ci.yml/badge.svg)](https://github.com/Patrik652/patrik-foodtrack-erp/actions/workflows/ci.yml)
+
 FoodTrack ERP je portfolio demo pre C#/.NET pozíciu v Starbug s.r.o. Repo teraz obsahuje dokončený ASP.NET Core 8 backend, reálnu .NET MAUI mobilnú appku pod `src/FoodTrack.Mobile`, JWT autentifikáciu pre skladové write flow, Docker support a rozšírené automatizované testy.
 
 ## Scope
@@ -22,6 +24,17 @@ FoodTrack ERP je portfolio demo pre C#/.NET pozíciu v Starbug s.r.o. Repo teraz
 - MAUI mobile shell
 - Docker support
 - 36+ automated tests
+
+## CI/CD
+
+GitHub Actions workflow je v `.github/workflows/ci.yml` a na každom `push`/`pull request` vykoná:
+
+- `dotnet restore FoodTrack.sln`
+- `dotnet build FoodTrack.sln --configuration Release`
+- `dotnet test FoodTrack.sln --filter "FullyQualifiedName!~FoodTrack.Mobile"`
+- `docker compose -f docker-compose.yml config`
+- `docker compose build foodtrack-api`
+- upload `.trx` výsledkov ako CI artifact
 
 ## Architecture
 
@@ -92,6 +105,12 @@ Authenticated warehouse/admin endpoints:
 - `DELETE /api/batches/{batchId}`
 
 Swagger používa bearer security scheme. Najprv zavolaj `POST /api/auth/login`, potom vlož vrátený token do `Authorize`.
+
+## Swagger Preview
+
+Živý screenshot z lokálne spusteného Swagger UI:
+
+![FoodTrack Swagger UI](docs/assets/swagger-ui.png)
 
 ## Quick Demo
 
@@ -169,6 +188,27 @@ curl http://localhost:5099/api/dashboard/expiration-overview
 curl http://localhost:5099/api/dashboard/stock-alerts
 curl "http://localhost:5099/api/stock-movements?batchId=$BATCH_ID"
 ```
+
+## Postman Collection
+
+Repo obsahuje aj import-ready Postman artefakty:
+
+- `docs/postman/FoodTrackERP.postman_collection.json`
+- `docs/postman/FoodTrackERP.local.postman_environment.json`
+
+Collection si sama uloží `jwtToken`, prvý `productId` a následne aj `batchId` z `receive` requestu, takže demo flow ide spustiť priamo sekvenčne.
+
+## Demo Video
+
+GitHub-ready prezentačné médium je priamo vo verziovanom stave:
+
+- video asset: `docs/assets/foodtrack-demo.mp4`
+- poster image: `docs/assets/foodtrack-demo-poster.png`
+- spoken walkthrough script: `docs/presentation/github-demo-script.md`
+
+![FoodTrack Demo Poster](docs/assets/foodtrack-demo-poster.png)
+
+Najpraktickejší finálny krok na GitHube je nahrať `foodtrack-demo.mp4` do Release assets alebo ho odlinkovať z About sekcie repozitára.
 
 ## Local Setup
 

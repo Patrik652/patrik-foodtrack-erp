@@ -1,0 +1,299 @@
+{
+  "info": {
+    "_postman_id": "7c3c3900-4377-4a9c-8a8f-f36c967d8f5a",
+    "name": "FoodTrack ERP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Portfolio demo collection for the FoodTrack ERP ASP.NET Core 8 API."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5099"
+    },
+    {
+      "key": "badgeCode",
+      "value": "OP-1001"
+    },
+    {
+      "key": "pin",
+      "value": "1234"
+    },
+    {
+      "key": "jwtToken",
+      "value": ""
+    },
+    {
+      "key": "productId",
+      "value": ""
+    },
+    {
+      "key": "batchId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Login returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const payload = pm.response.json();",
+              "pm.collectionVariables.set('jwtToken', payload.accessToken);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"badgeCode\": \"{{badgeCode}}\",\n  \"pin\": \"{{pin}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "description": "Authenticates a seeded warehouse operator and stores the JWT into the collection variable `jwtToken`."
+      },
+      "response": []
+    },
+    {
+      "name": "02 - Products",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Products returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const products = pm.response.json();",
+              "pm.expect(products.length).to.be.above(0);",
+              "pm.collectionVariables.set('productId', products[0].id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "products"
+          ]
+        },
+        "description": "Reads the seeded catalog and stores the first product identifier as `productId`."
+      },
+      "response": []
+    },
+    {
+      "name": "03 - Expiration Overview",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/expiration-overview",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dashboard",
+            "expiration-overview"
+          ]
+        },
+        "description": "Returns the current expiration buckets for warehouse operators."
+      },
+      "response": []
+    },
+    {
+      "name": "04 - Stock Alerts",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/stock-alerts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dashboard",
+            "stock-alerts"
+          ]
+        },
+        "description": "Returns products whose active stock fell below the configured minimum."
+      },
+      "response": []
+    },
+    {
+      "name": "05 - Receive Batch",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Receive returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const payload = pm.response.json();",
+              "pm.collectionVariables.set('batchId', payload.batchId);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"batchNumber\": \"LOT-POSTMAN-001\",\n  \"manufactureDate\": \"2026-04-13T00:00:00Z\",\n  \"expirationDate\": \"2026-05-15T00:00:00Z\",\n  \"quantity\": 10,\n  \"location\": \"A-02-POSTMAN\",\n  \"note\": \"Postman receive demo\",\n  \"receivedAtUtc\": \"2026-04-13T06:45:00Z\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/inventory/receive",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "inventory",
+            "receive"
+          ]
+        },
+        "description": "Creates a new batch for the selected product and stores the created batch ID as `batchId`."
+      },
+      "response": []
+    },
+    {
+      "name": "06 - Dispatch Stock",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 1,\n  \"dispatchedAtUtc\": \"2026-04-13T06:46:00Z\",\n  \"note\": \"Postman dispatch demo\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/inventory/dispatch",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "inventory",
+            "dispatch"
+          ]
+        },
+        "description": "Dispatches stock using the server-side FIFO policy."
+      },
+      "response": []
+    },
+    {
+      "name": "07 - Recall Batch",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwtToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/batches/{{batchId}}/recall",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "batches",
+            "{{batchId}}",
+            "recall"
+          ]
+        },
+        "description": "Marks the received batch as recalled and appends an audit movement."
+      },
+      "response": []
+    },
+    {
+      "name": "08 - Batch Movements",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/stock-movements?batchId={{batchId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "stock-movements"
+          ],
+          "query": [
+            {
+              "key": "batchId",
+              "value": "{{batchId}}"
+            }
+          ]
+        },
+        "description": "Reads the audit trail for the batch created in the collection run."
+      },
+      "response": []
+    }
+  ]
+}
