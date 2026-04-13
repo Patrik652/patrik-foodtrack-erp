@@ -4,8 +4,7 @@
 .vscode/
 TestResults/
 artifacts/
-.plan/JUDGE_TODO.md
-.plan/codex-runner/
+.plan/
 
 *.user
 *.rsuser
