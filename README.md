@@ -2,6 +2,12 @@
 
 [![CI](https://github.com/Patrik652/patrik-foodtrack-erp/actions/workflows/ci.yml/badge.svg)](https://github.com/Patrik652/patrik-foodtrack-erp/actions/workflows/ci.yml)
 
+<p align="center">
+  <img src="https://github.com/Patrik652/patrik-foodtrack-erp/releases/download/v1.0.0/foodtrack-demo.mp4" alt="FoodTrack ERP Demo" width="720" />
+</p>
+
+> Swagger UI walkthrough — login, produkty, dashboard, stock alerty, inventory endpointy
+
 FoodTrack ERP je portfolio demo pre C#/.NET pozíciu v Starbug s.r.o. Repo teraz obsahuje dokončený ASP.NET Core 8 backend, reálnu .NET MAUI mobilnú appku pod `src/FoodTrack.Mobile`, JWT autentifikáciu pre skladové write flow, Docker support a rozšírené automatizované testy.
 
 ## Scope
@@ -197,14 +203,6 @@ Repo obsahuje aj import-ready Postman artefakty:
 - `docs/postman/FoodTrackERP.local.postman_environment.json`
 
 Collection si sama uloží `jwtToken`, prvý `productId` a následne aj `batchId` z `receive` requestu, takže demo flow ide spustiť priamo sekvenčne.
-
-## Demo Video
-
-Swagger UI walkthrough — login, produkty, dashboard, stock alerty, inventory endpointy:
-
-https://github.com/Patrik652/patrik-foodtrack-erp/releases/download/v1.0.0/foodtrack-demo.mp4
-
-Skript na regenerovanie videa: `node scripts/record-demo-video.mjs`
 
 ## Local Setup
 
