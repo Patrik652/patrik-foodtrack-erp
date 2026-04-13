@@ -3,10 +3,8 @@
 [![CI](https://github.com/Patrik652/patrik-foodtrack-erp/actions/workflows/ci.yml/badge.svg)](https://github.com/Patrik652/patrik-foodtrack-erp/actions/workflows/ci.yml)
 
 <p align="center">
-  <img src="https://github.com/Patrik652/patrik-foodtrack-erp/releases/download/v1.0.0/foodtrack-demo.mp4" alt="FoodTrack ERP Demo" width="720" />
+  <img src="docs/assets/foodtrack-demo.gif" alt="FoodTrack ERP Demo" width="720" />
 </p>
-
-> Swagger UI walkthrough — login, produkty, dashboard, stock alerty, inventory endpointy
 
 FoodTrack ERP je portfolio demo pre C#/.NET pozíciu v Starbug s.r.o. Repo teraz obsahuje dokončený ASP.NET Core 8 backend, reálnu .NET MAUI mobilnú appku pod `src/FoodTrack.Mobile`, JWT autentifikáciu pre skladové write flow, Docker support a rozšírené automatizované testy.
 
