@@ -24,6 +24,11 @@ artifacts/
 *.jks
 *.mobileprovision
 
+node_modules/
+package.json
+package-lock.json
+tmp/
+
 _ReSharper*/
 *.DotSettings.user
 .idea/
