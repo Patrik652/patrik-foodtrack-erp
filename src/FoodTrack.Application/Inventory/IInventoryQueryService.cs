@@ -11,6 +11,11 @@ public interface IInventoryQueryService
     Task<ExpirationDashboardDto> GetExpirationDashboardAsync(DateTime asOfUtc, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Returns products whose effective active stock is below their configured minimum.
+    /// </summary>
+    Task<IReadOnlyList<LowStockAlertDto>> GetLowStockAlertsAsync(DateTime asOfUtc, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Returns the product catalog ordered for operator browsing.
     /// </summary>
     Task<IReadOnlyList<ProductListItemDto>> GetProductsAsync(CancellationToken cancellationToken);

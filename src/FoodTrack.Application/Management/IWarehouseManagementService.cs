@@ -43,6 +43,11 @@ public interface IWarehouseManagementService
     Task<bool> DeleteBatchAsync(Guid batchId, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Marks one batch as recalled and appends an audit movement.
+    /// </summary>
+    Task<BatchDetailDto?> RecallBatchAsync(Guid batchId, string performedBy, DateTime recalledAtUtc, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Lists stock movements, optionally filtered by batch.
     /// </summary>
     Task<IReadOnlyList<StockMovementDto>> GetStockMovementsAsync(Guid? batchId, CancellationToken cancellationToken);

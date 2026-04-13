@@ -69,6 +69,33 @@ public sealed class InventoryQueryServiceTests
         dashboard.Items[1].DaysUntilExpiration.Should().Be(3);
     }
 
+    [Fact]
+    public async Task GetLowStockAlertsAsync_ShouldReturnProductsBelowMinStockUsingActiveBatchSumsOnly()
+    {
+        var asOfUtc = new DateTime(2026, 4, 12, 8, 0, 0, DateTimeKind.Utc);
+        var lowStockProduct = Product.Create("Jogurt Biely 150g", "MLK-777", ProductCategory.Dairy, UnitOfMeasure.Piece, 50);
+        var healthyProduct = Product.Create("Maslo Cerstve 250g", "MLK-004", ProductCategory.Dairy, UnitOfMeasure.Piece, 15);
+
+        var activeLowBatch = Batch.Create(lowStockProduct.Id, "LOW-001", asOfUtc.AddDays(-2), asOfUtc.AddDays(10), 12m, "L-01");
+        var recalledLowBatch = Batch.Create(lowStockProduct.Id, "LOW-002", asOfUtc.AddDays(-2), asOfUtc.AddDays(10), 99m, "L-02");
+        recalledLowBatch.ApplyWarehouseUpdate("L-02", 99m, BatchStatus.Recalled, asOfUtc);
+
+        var expiredLowBatch = Batch.Create(lowStockProduct.Id, "LOW-003", asOfUtc.AddDays(-10), asOfUtc.AddDays(-1), 80m, "L-03");
+        var healthyBatch = Batch.Create(healthyProduct.Id, "OK-001", asOfUtc.AddDays(-3), asOfUtc.AddDays(20), 20m, "H-01");
+
+        var service = new InventoryQueryService(
+            new FakeProductRepository(lowStockProduct, healthyProduct),
+            new FakeBatchRepository(activeLowBatch, recalledLowBatch, expiredLowBatch, healthyBatch));
+
+        var alerts = await service.GetLowStockAlertsAsync(asOfUtc, CancellationToken.None);
+
+        alerts.Should().ContainSingle();
+        alerts[0].ProductName.Should().Be("Jogurt Biely 150g");
+        alerts[0].CurrentQuantity.Should().Be(12m);
+        alerts[0].MinStockLevel.Should().Be(50);
+        alerts[0].ShortageQuantity.Should().Be(38m);
+    }
+
     private sealed class FakeProductRepository(params Product[] products) : IProductRepository
     {
         public Task AddAsync(Product product, CancellationToken cancellationToken)

@@ -25,4 +25,20 @@ public sealed class DashboardController(IInventoryQueryService inventoryQuerySer
 
         return Ok(dashboard);
     }
+
+    /// <summary>
+    /// Returns products whose effective active stock is below the configured minimum.
+    /// </summary>
+    [HttpGet("stock-alerts")]
+    [ProducesResponseType(typeof(IReadOnlyList<LowStockAlertDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<LowStockAlertDto>>> GetStockAlerts(
+        [FromQuery] DateTime? asOfUtc,
+        CancellationToken cancellationToken)
+    {
+        var alerts = await inventoryQueryService.GetLowStockAlertsAsync(
+            asOfUtc ?? DateTime.UtcNow,
+            cancellationToken);
+
+        return Ok(alerts);
+    }
 }

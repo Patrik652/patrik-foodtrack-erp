@@ -1,4 +1,5 @@
 using FoodTrack.Application.Abstractions.Persistence;
+using FoodTrack.Domain.Entities;
 using FoodTrack.Domain.Enums;
 using FoodTrack.Domain.Policies;
 
@@ -68,6 +69,41 @@ public sealed class InventoryQueryService(IProductRepository productRepository, 
     }
 
     /// <inheritdoc />
+    public async Task<IReadOnlyList<LowStockAlertDto>> GetLowStockAlertsAsync(DateTime asOfUtc, CancellationToken cancellationToken)
+    {
+        var referenceTimestamp = NormalizeUtc(asOfUtc);
+        var referenceDate = referenceTimestamp.Date;
+        var products = await productRepository.ListAsync(cancellationToken);
+        var batches = await batchRepository.ListAsync(cancellationToken);
+
+        var activeQuantityByProduct = batches
+            .Where(batch => IsEffectiveActiveStock(batch, referenceDate))
+            .GroupBy(batch => batch.ProductId)
+            .ToDictionary(group => group.Key, group => group.Sum(batch => batch.Quantity));
+
+        return products
+            .Select(product =>
+            {
+                activeQuantityByProduct.TryGetValue(product.Id, out var currentQuantity);
+                return new LowStockAlertDto
+                {
+                    ProductId = product.Id,
+                    ProductName = product.Name,
+                    ProductSku = product.Sku,
+                    Category = product.Category.ToString(),
+                    Unit = product.Unit.ToString(),
+                    CurrentQuantity = currentQuantity,
+                    MinStockLevel = product.MinStockLevel,
+                    ShortageQuantity = Math.Max(product.MinStockLevel - currentQuantity, 0m)
+                };
+            })
+            .Where(alert => alert.CurrentQuantity < alert.MinStockLevel)
+            .OrderByDescending(alert => alert.ShortageQuantity)
+            .ThenBy(alert => alert.ProductName, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    /// <inheritdoc />
     public async Task<IReadOnlyList<ProductListItemDto>> GetProductsAsync(CancellationToken cancellationToken)
     {
         var products = await productRepository.ListAsync(cancellationToken);
@@ -128,5 +164,12 @@ public sealed class InventoryQueryService(IProductRepository productRepository, 
             ExpirationAlertLevel.Notice30Days => 3,
             _ => 4
         };
+    }
+
+    private static bool IsEffectiveActiveStock(Batch batch, DateTime referenceDate)
+    {
+        return batch.Quantity > 0m
+            && batch.Status != BatchStatus.Recalled
+            && batch.ExpirationDate.Date >= referenceDate;
     }
 }

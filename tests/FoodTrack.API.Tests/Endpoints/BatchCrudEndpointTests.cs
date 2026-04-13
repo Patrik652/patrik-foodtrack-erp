@@ -77,6 +77,39 @@ public sealed class BatchCrudEndpointTests(FoodTrackApiFactory factory) : IClass
         getDeletedResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact]
+    public async Task RecallBatch_ShouldMarkBatchAsRecalledAndAppendRecallMovement()
+    {
+        using var client = factory.CreateClient();
+        await client.AuthenticateAsDefaultOperatorAsync();
+        var milk = await GetMilkProductAsync(client);
+
+        var receiveResponse = await client.PostAsJsonAsync("/api/inventory/receive", new
+        {
+            productId = milk.Id,
+            batchNumber = $"LOT-RECALL-{Guid.NewGuid():N}"[..20].ToUpperInvariant(),
+            manufactureDate = "2026-04-12T08:00:00Z",
+            expirationDate = "2026-05-12T08:00:00Z",
+            quantity = 9m,
+            location = "R-01",
+            note = "Recall candidate",
+            receivedAtUtc = "2026-04-12T08:00:00Z"
+        });
+        receiveResponse.EnsureSuccessStatusCode();
+        var created = await receiveResponse.Content.ReadFromJsonAsync<ReceiveResponse>();
+
+        var recallResponse = await client.PostAsync($"/api/batches/{created!.BatchId}/recall", content: null);
+
+        recallResponse.EnsureSuccessStatusCode();
+        var payload = await recallResponse.Content.ReadFromJsonAsync<BatchDetailResponse>();
+        payload.Should().NotBeNull();
+        payload!.Status.Should().Be("Recalled");
+        payload.Movements.Should().Contain(movement =>
+            movement.Type == "Recall"
+            && movement.Quantity == 9m
+            && movement.PerformedBy == "Roman Skladnik");
+    }
+
     private async Task<Guid> GetSeedBatchIdAsync()
     {
         using var scope = factory.Services.CreateScope();

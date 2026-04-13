@@ -8,5 +8,6 @@ public enum StockMovementType
     Receive = 1,
     Dispatch = 2,
     Adjust = 3,
-    Return = 4
+    Return = 4,
+    Recall = 5
 }

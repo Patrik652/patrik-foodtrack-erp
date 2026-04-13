@@ -1,5 +1,6 @@
 using FoodTrack.Application.Management;
 using FoodTrack.Domain.Enums;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -59,6 +60,32 @@ public sealed class WarehouseBatchesController(IWarehouseManagementService wareh
     {
         var deleted = await warehouseManagementService.DeleteBatchAsync(batchId, cancellationToken);
         return deleted ? NoContent() : NotFound();
+    }
+
+    /// <summary>
+    /// Marks one batch as recalled and appends an audit movement entry.
+    /// </summary>
+    [HttpPost("{batchId:guid}/recall")]
+    [Authorize]
+    [ProducesResponseType(typeof(BatchDetailDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<BatchDetailDto>> RecallBatch(Guid batchId, CancellationToken cancellationToken)
+    {
+        var batch = await warehouseManagementService.RecallBatchAsync(
+            batchId,
+            ResolvePerformedBy(),
+            DateTime.UtcNow,
+            cancellationToken);
+
+        return batch is null ? NotFound() : Ok(batch);
+    }
+
+    private string ResolvePerformedBy()
+    {
+        var operatorName = User.FindFirstValue(ClaimTypes.Name);
+        return string.IsNullOrWhiteSpace(operatorName)
+            ? throw new InvalidOperationException("Authenticated operator identity is missing.")
+            : operatorName;
     }
 }
 

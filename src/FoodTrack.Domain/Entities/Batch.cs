@@ -214,6 +214,14 @@ public sealed class Batch
     }
 
     /// <summary>
+    /// Marks the batch as recalled so it can no longer be dispatched.
+    /// </summary>
+    public void Recall()
+    {
+        Status = BatchStatus.Recalled;
+    }
+
+    /// <summary>
     /// Applies an administrative warehouse update for location, quantity, and status.
     /// </summary>
     public void ApplyWarehouseUpdate(string location, decimal quantity, BatchStatus status, DateTime asOfUtc)

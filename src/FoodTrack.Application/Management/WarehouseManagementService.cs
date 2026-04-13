@@ -1,5 +1,6 @@
 using FoodTrack.Application.Abstractions.Persistence;
 using FoodTrack.Domain.Entities;
+using FoodTrack.Domain.Enums;
 
 namespace FoodTrack.Application.Management;
 
@@ -112,6 +113,42 @@ public sealed class WarehouseManagementService(
         await batchRepository.DeleteAsync(batch, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<BatchDetailDto?> RecallBatchAsync(
+        Guid batchId,
+        string performedBy,
+        DateTime recalledAtUtc,
+        CancellationToken cancellationToken)
+    {
+        var batch = await batchRepository.GetByIdAsync(batchId, cancellationToken);
+        if (batch is null)
+        {
+            return null;
+        }
+
+        if (batch.Status != BatchStatus.Recalled)
+        {
+            if (batch.Quantity <= 0m)
+            {
+                throw new InvalidOperationException("Only batches with remaining quantity can be recalled.");
+            }
+
+            batch.Recall();
+            await stockMovementRepository.AddAsync(
+                StockMovement.Create(
+                    batch.Id,
+                    StockMovementType.Recall,
+                    batch.Quantity,
+                    recalledAtUtc,
+                    "Sarza stiahnuta z obehu.",
+                    performedBy),
+                cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        return await GetBatchByIdAsync(batchId, recalledAtUtc, cancellationToken);
     }
 
     /// <inheritdoc />
